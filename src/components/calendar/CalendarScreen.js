@@ -10,33 +10,42 @@ import 'moment/locale/es';
 import { CalendarEvent } from './CalendarEvent';
 import { useState } from 'react';
 import { CalendarModal } from './CalendarModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { uiOpenModal } from '../../actions/ui';
+import { eventClearActive, eventSetActive } from '../../actions/events';
+import { AddNewFab } from '../ui/AddNewFab';
+import { DeleteEventFab } from '../ui/DeleteEventFab';
 
 moment.locale('es');
 
 const localizer = momentLocalizer(moment) // or globalizeLocalizer
 
-const events = [{
-  title: 'Cumple Marina',
-  start: moment().toDate(),
-  end: moment().add( 2, 'hours' ).toDate(),
-  bgcolor: '#fafafa',
-  notes: 'Comprarle regalo',
-  user: {
-    _id: '123',
-    name: 'Gervasio'
-  }
-}]
+
 
 export const CalendarScreen = () => {
   
   const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'month' )
+  const dispatch = useDispatch();
+  const { events, activeEvent } = useSelector(state => state.calendar);
 
   const onDoubleClick = (e) => {
-    console.log(e)
+    dispatch( uiOpenModal() )
   }
 
   const onSelectEvent = (e) => {
+    dispatch( eventSetActive(e) );
     console.log(e)
+  }
+
+  const onSelectSlot = (e) => {
+    if( activeEvent ){
+      dispatch( eventClearActive() );
+    } else {
+      if( e.action === 'doubleClick'){
+        console.log('Se dobleclickeo')
+      }
+    }
+    
   }
 
   const onViewChange = (e) => {
@@ -59,6 +68,7 @@ export const CalendarScreen = () => {
     }
   };
 
+  
   return (
     <div className="calendar-screen" >
       <Navbar />
@@ -72,6 +82,8 @@ export const CalendarScreen = () => {
         eventPropGetter={ eventStyleGetter }
         onDoubleClickEvent={ onDoubleClick }
         onSelectEvent={ onSelectEvent }
+        onSelectSlot={ onSelectSlot }
+        selectable={ true }
         onView={ onViewChange }
         components={{
           event: CalendarEvent
@@ -79,6 +91,12 @@ export const CalendarScreen = () => {
         view={ lastView }
       />
 
+      <AddNewFab />
+      
+      {
+        activeEvent && <DeleteEventFab />
+      }
+      
       <CalendarModal />
 
     </div>
