@@ -6,7 +6,7 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiCloseModal } from '../../actions/ui';
-import { eventAddNew, eventClearActive, eventUpdated } from '../../actions/events';
+import { eventClearActive, eventStartAddNew, eventStartUpdate } from '../../actions/events';
 import { useEffect } from 'react';
 
 
@@ -100,16 +100,10 @@ export const CalendarModal = () => {
     }
 
     if( activeEvent ){
-      dispatch( eventUpdated( formValues ) )
+      dispatch( eventStartUpdate( formValues ) )
+      
     } else {
-        dispatch( eventAddNew({
-          ...formValues,
-          id: new Date().getTime(),
-          user: {
-            _id: '123',
-            name: 'Gervasio'
-          }
-        }) );
+        dispatch( eventStartAddNew( formValues ) );
     }
 
     setTitleValid(true)
