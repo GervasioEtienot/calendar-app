@@ -8,15 +8,15 @@ import './login.css';
 export const LoginScreen = () => {
     
     const [ formLoginValues, handleLoginInputChange ] = useForm({
-        lEmail: 'gervasioe@gmail.com',
-        lPassword: '123456'
+        lEmail: '',
+        lPassword: ''
     });
 
     const [ formRegisterValues, handleRegisterInputChange ] = useForm({
-        rName: 'Constantino',
-        rEmail: 'consti@gmail.com',
-        rPassword1: '123456',
-        rPassword2: '123456'
+        rName: '',
+        rEmail: '',
+        rPassword1: '',
+        rPassword2: ''
     });
 
     const { rName, rEmail, rPassword1, rPassword2 } = formRegisterValues;
@@ -39,7 +39,7 @@ export const LoginScreen = () => {
     }
 
     return (
-        <div className="container login-container">
+        <div className="container-sm login-container">
             <div className="row">
                 <div className="col-md-6 login-form-1">
                     <h3>Ingreso</h3>
@@ -49,6 +49,7 @@ export const LoginScreen = () => {
                                 type="text"
                                 className="form-control"
                                 placeholder="Correo"
+                                autoComplete="off"
                                 name="lEmail"
                                 value={ lEmail }
                                 onChange={ handleLoginInputChange }
