@@ -50,6 +50,8 @@ export const CalendarModal = () => {
   useEffect(() => {
     if( activeEvent ){
       setFormValues(activeEvent)
+      setDateStart( activeEvent.start )
+      setDateEnd( activeEvent.end )
     } else {
       setFormValues( initEvent )
     }
@@ -75,6 +77,15 @@ export const CalendarModal = () => {
       ...formValues,
       start: e
     })
+    
+    if(e >= dateEnd){
+      const startPlusOne = moment( e ).add( 1, 'hours').toDate();
+      setDateEnd(startPlusOne)
+      setFormValues({
+        ...formValues,
+        end: startPlusOne
+      })
+    }
   }
 
   const handleEndDateChange = (e) => {
@@ -99,7 +110,7 @@ export const CalendarModal = () => {
       setTitleValid(false);
     }
 
-    if( activeEvent ){
+    if( formValues.id ){
       dispatch( eventStartUpdate( formValues ) )
       
     } else {

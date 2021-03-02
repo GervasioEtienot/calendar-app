@@ -39,7 +39,6 @@ export const CalendarScreen = () => {
 
   const onSelectEvent = (e) => {
     dispatch( eventSetActive(e) );
-    console.log(e)
   }
 
   const onSelectSlot = (e) => {
@@ -47,7 +46,8 @@ export const CalendarScreen = () => {
       dispatch( eventClearActive() );
     } else {
       if( e.action === 'doubleClick'){
-        console.log('Se dobleclickeo')
+        dispatch( eventSetActive(e) );
+        dispatch( uiOpenModal() )
       }
     }
     
