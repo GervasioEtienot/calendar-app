@@ -13,6 +13,7 @@ export const DeleteEventFab = () => {
   return (
     <button
         className="btn btn-danger fab-danger"
+        style={{ zIndex: 99 }}
         onClick={ handleDelete }
     >
       <i className="fas fa-trash" ></i>

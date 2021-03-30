@@ -94,6 +94,9 @@ export const CalendarScreen = () => {
           event: CalendarEvent
         }}
         view={ lastView }
+        // min={new Date(2016, 10, 0, 17, 0, 0)}
+        // scrollToTime={new Date(2016, 1, 1, 10)}
+        
       />
 
       <AddNewFab />

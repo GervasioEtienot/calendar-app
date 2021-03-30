@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import { fetchWithToken } from "../helpers/fetch";
-import { prepareEvents } from "../helpers/prepareEvents";
+import { prepareEvents, prepareFixedEvent } from "../helpers/prepareEvents";
 import { types } from "../types/types";
 
 
@@ -24,8 +24,8 @@ export const eventStartAddNew = (event) => {
           _id: uid,
           name
         }
-
-        dispatch( eventAddNew( event ) );
+       
+        dispatch( eventAddNew( prepareFixedEvent(event, true) ) );
       }
       
     } catch (error) {
@@ -50,7 +50,9 @@ export const eventStartUpdate = (event) => {
       const body = await resp.json();
       
       if(body.ok){
-        dispatch( eventUpdated( event ) );
+        dispatch( eventDeleted( event.id ) );
+        dispatch( eventAddNew( prepareFixedEvent(event, true) ) );
+        
       } else {
         Swal.fire( 'Error', body.msg, 'error' );
       }
@@ -76,7 +78,7 @@ export const eventStartDelete = () => {
       const body = await resp.json();
       
       if(body.ok){
-        dispatch( eventDeleted() );
+        dispatch( eventDeleted( id ) );
       } else {
         Swal.fire( 'Error', body.msg, 'error' );
       }
@@ -87,7 +89,7 @@ export const eventStartDelete = () => {
   }
 }
 
-const eventDeleted = () => ({ type: types.eventDeleted });
+const eventDeleted = ( id ) => ({ type: types.eventDeleted, payload: id });
 
 export const eventsStartLoading = () => {
   return async ( dispatch ) => {
@@ -96,8 +98,14 @@ export const eventsStartLoading = () => {
       const body = await resp.json();
       
       const events = prepareEvents( body.events )
-
-      dispatch( eventsLoaded( events ) );
+      let expandedEvents = events;
+      events.forEach( (event) => {
+        if( event.fixedEvent ){
+          expandedEvents = [ ...expandedEvents, ...prepareFixedEvent(event) ]
+        }
+      })
+      
+      dispatch( eventsLoaded( expandedEvents ) );
       
     } catch (error) {
         console.log(error)

@@ -31,37 +31,38 @@ const initEvent = {
   title: "",
   notes: "",
   start: now.toDate(),
-  end: nowPlus1.toDate()
+  end: nowPlus1.toDate(),
+  fixedEvent: false
 }
 
 export const CalendarModal = () => {
   
-  const [dateStart, setDateStart] = useState( now.toDate());
-  const [dateEnd, setDateEnd] = useState( nowPlus1.toDate() )
   const [titleValid, setTitleValid] = useState(true)
   const [formValues, setFormValues] = useState( initEvent );
+  const [addNotes, setAddNotes] = useState(false);
 
   const { modalOpen } = useSelector(state => state.ui );
   const { activeEvent } = useSelector(state => state.calendar ); 
   const dispatch = useDispatch();
 
-  const { title, notes, start, end } = formValues;
+  const { title, notes, start, end, fixedEvent } = formValues;
 
   useEffect(() => {
     if( activeEvent ){
       setFormValues(activeEvent)
-      setDateStart( activeEvent.start )
-      setDateEnd( activeEvent.end )
+      if( activeEvent.notes ){
+        setAddNotes(true)
+      }
     } else {
       setFormValues( initEvent )
     }
     
-  }, [activeEvent])
+  }, [activeEvent]);
 
   const handleInputChange = ({ target }) => {
     setFormValues({
       ...formValues,
-      [target.name]: target.value
+      [target.name]: target.type === 'checkbox' ? target.checked : target.value
     })
   }
 
@@ -69,31 +70,32 @@ export const CalendarModal = () => {
     dispatch( uiCloseModal() );
     dispatch( eventClearActive() );
     setFormValues( initEvent );
+    setAddNotes(false)
   }
 
   const handleStartDateChange = (e) => {
-    setDateStart( e )
-    setFormValues({
-      ...formValues,
-      start: e
-    })
-    
-    if(e >= dateEnd){
+        
+    if(e >= end){
       const startPlusOne = moment( e ).add( 1, 'hours').toDate();
-      setDateEnd(startPlusOne)
       setFormValues({
         ...formValues,
+        start: e,
         end: startPlusOne
-      })
+      });
+    } else {
+      setFormValues({
+        ...formValues,
+        start: e
+      });
     }
   }
 
   const handleEndDateChange = (e) => {
-    setDateEnd( e )
     setFormValues({
       ...formValues,
       end: e
     })
+    
   }
 
   const handleSubmitForm = (e) => {
@@ -114,7 +116,7 @@ export const CalendarModal = () => {
       dispatch( eventStartUpdate( formValues ) )
       
     } else {
-        dispatch( eventStartAddNew( formValues ) );
+      dispatch( eventStartAddNew( formValues ) );
     }
 
     setTitleValid(true)
@@ -138,7 +140,7 @@ export const CalendarModal = () => {
               <label>Fecha y hora inicio</label>
               <DateTimePicker
                 onChange={ handleStartDateChange }
-                value={ dateStart }
+                value={ start }
                 className="form-control"
               />
           </div>
@@ -147,8 +149,8 @@ export const CalendarModal = () => {
               <label>Fecha y hora fin</label>
               <DateTimePicker
                 onChange={ handleEndDateChange }
-                value={ dateEnd }
-                minDate={ dateStart }
+                value={ end }
+                minDate={ start }
                 className="form-control"
               />
           </div>
@@ -168,17 +170,39 @@ export const CalendarModal = () => {
               <small id="emailHelp" className="form-text text-muted">Una descripción corta</small>
           </div>
 
-          <div className="form-group">
-              <textarea 
-                  type="text" 
-                  className="form-control"
-                  placeholder="Notas"
-                  rows="5"
-                  name="notes"
-                  value={ notes }
+          {
+            addNotes ? 
+            (
+              <div className="form-group">
+                <textarea 
+                    type="text" 
+                    className="form-control"
+                    placeholder="Notas"
+                    rows="5"
+                    name="notes"
+                    value={ notes }
+                    onChange={ handleInputChange }
+                ></textarea>
+                <small id="emailHelp" className="form-text text-muted">Información adicional</small>
+              </div>
+            ) :
+            <button 
+                onClick={ () => setAddNotes( true ) } 
+                className="btn btn-outline-secondary btn-sm mb-2"
+            > 
+              Agregar nota 
+            </button>
+          }
+
+          <div className="">
+              <label>Evento fijo semanal</label>
+              <input 
+                  type="checkbox"
+                  className="ml-2"
+                  name="fixedEvent"
+                  checked={ fixedEvent }
                   onChange={ handleInputChange }
-              ></textarea>
-              <small id="emailHelp" className="form-text text-muted">Información adicional</small>
+              />
           </div>
 
           <button
