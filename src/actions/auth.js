@@ -9,7 +9,6 @@ export const startLogin = ( email, password ) => {
     
     const resp = await fetchWithoutToken( 'auth', { email, password }, 'POST' );
     const { ok, token, uid, name, msg } = await resp.json();
-    
     if( ok ){
       localStorage.setItem('token', token );
       localStorage.setItem('token-init-date', new Date().getTime() );
@@ -22,16 +21,21 @@ export const startLogin = ( email, password ) => {
 
 export const startRegister = ( email, password, userName ) => {
   return async( dispatch ) => {
-    
     const resp = await fetchWithoutToken( 'auth/new', { email, password, name: userName }, 'POST' );
-    const { ok, token, uid, name, msg } = await resp.json();
+    const { ok, token, uid, name, errors } = await resp.json();
     
     if( ok ){
       localStorage.setItem('token', token );
       localStorage.setItem('token-init-date', new Date().getTime() );
       dispatch( login({ uid, name }) );
     } else {
-      Swal.fire('Error', msg, 'error');
+      console.log(errors)
+      let error = ''
+      for (const key in errors) {
+        error = error.concat(`${errors[key].msg}. `)
+      }
+      
+      Swal.fire('Error', error, 'error');
     }
   }
 }

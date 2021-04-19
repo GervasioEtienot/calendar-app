@@ -39,6 +39,7 @@ export const LoginScreen = () => {
     }
 
     return (
+        <div className="main-container">
         <div className="container-sm login-container">
             <div className="row">
                 <div className="col-md-6 login-form-1">
@@ -82,7 +83,7 @@ export const LoginScreen = () => {
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Nombre"
+                                placeholder="Nombre y apellido"
                                 name='rName'
                                 value={ rName }
                                 onChange={ handleRegisterInputChange }
@@ -129,6 +130,7 @@ export const LoginScreen = () => {
                     </form>
                 </div>
             </div>
+        </div>
         </div>
     )
 }
