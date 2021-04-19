@@ -78,19 +78,12 @@ export const CalendarModal = () => {
 
   const handleStartDateChange = (e) => {
         
-    if(e >= end){
-      const startPlusOne = moment( e ).add( 1, 'hours').toDate();
-      setFormValues({
-        ...formValues,
-        start: e,
-        end: startPlusOne
-      });
-    } else {
-      setFormValues({
-        ...formValues,
-        start: e
-      });
-    }
+    const startPlusOne = moment( e ).add( 1, 'hours').toDate();
+    setFormValues({
+      ...formValues,
+      start: e,
+      end: startPlusOne
+    });
   }
 
   const closeModal = () => {
