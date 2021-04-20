@@ -15,19 +15,20 @@ import { uiOpenModal } from '../../actions/ui';
 import { eventClearActive, eventSetActive, eventsStartLoading } from '../../actions/events';
 import { AddNewFab } from '../ui/AddNewFab';
 import { DeleteEventFab } from '../ui/DeleteEventFab';
+import { ColoredDateCellWrapper } from './ColoredDateCellWrapper';
 
 moment.locale('es');
 
 const localizer = momentLocalizer(moment) // or globalizeLocalizer
 
-
+const fieldsColors = ['blue', 'green', 'red'];
 
 export const CalendarScreen = () => {
   
-  const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'month' )
+  const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'week' )
   const dispatch = useDispatch();
   const { events, activeEvent } = useSelector(state => state.calendar);
-  const { uid } = useSelector(state => state.auth);
+  // const { uid } = useSelector(state => state.auth);
 
   useEffect(() => {
     dispatch( eventsStartLoading() );
@@ -45,8 +46,21 @@ export const CalendarScreen = () => {
     if( activeEvent ){
       dispatch( eventClearActive() );
     } else {
-      if( e.action === 'doubleClick'){
-        dispatch( eventSetActive(e) );
+      if( e.action === 'doubleClick' || e.action === 'select' ){
+        const inicio = moment( e.start ).minutes(0).seconds(0).toDate()
+        const final = moment( inicio ).add(1, 'hours').toDate()
+        e.start = inicio
+        e.end = final
+        
+        let initTurn = {
+          // title: "",
+          players: [],
+          start: inicio,
+          end: final,
+          field: 0,
+          fixedEvent: false
+        }
+        dispatch( eventSetActive(initTurn) );
         dispatch( uiOpenModal() )
       }
     }
@@ -59,13 +73,18 @@ export const CalendarScreen = () => {
   }
 
   const eventStyleGetter = ( event, start, end, isSelected ) =>{
-
+    const now = moment();
     const style = {
-      backgroundColor: ( uid === event.user._id ) ? '#367CF7': '#465660',
-      borderRadius: '0px',
-      opacity: 0.8,
+      // backgroundColor: ( uid === event.user._id ) ? '#367CF7': '#465660',
+      backgroundColor: fieldsColors[event.field-1],
+      border: ( isSelected && activeEvent ) ? '3px solid black': '',
+      borderRadius: ( isSelected && activeEvent ) ? '4px': 'opx',
+      opacity: ( moment( now ).isBefore( moment( start ) ) ) ? 0.8: 0.4,
       display: 'block',
-      color: 'white'
+      color: 'white',
+      fontSize: '0.8rem',
+      maxWidth: "33.33%",
+      
     }
 
     return {
@@ -85,18 +104,21 @@ export const CalendarScreen = () => {
         endAccessor="end"
         messages={ messages }
         eventPropGetter={ eventStyleGetter }
+        defaultView="week"
         onDoubleClickEvent={ onDoubleClick }
         onSelectEvent={ onSelectEvent }
         onSelectSlot={ onSelectSlot }
         selectable={ true }
+        longPressThreshold={ 10 }
         onView={ onViewChange }
         components={{
-          event: CalendarEvent
+          event: CalendarEvent,
+          dateCellWrapper: ColoredDateCellWrapper
         }}
         view={ lastView }
-        // min={new Date(2016, 10, 0, 17, 0, 0)}
-        // scrollToTime={new Date(2016, 1, 1, 10)}
-        
+        min={new Date(2016, 10, 0, 17, 0, 0)}
+        scrollToTime={new Date(2016, 1, 1, 10)}
+        popup
       />
 
       <AddNewFab />

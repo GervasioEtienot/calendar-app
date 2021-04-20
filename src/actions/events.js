@@ -12,6 +12,17 @@ export const eventSetActive = (event) => ({
 export const eventStartAddNew = (event) => {
   return async( dispatch, getState ) => {
     const { uid, name } = getState().auth;
+    const { events } = getState().calendar;
+
+    let eventsFiltered = events.filter( evento => evento.start.toString() === event.start.toString() )
+    
+    let busyField = eventsFiltered.find( evento => evento.field === event.field )
+    
+    if( busyField ){
+      return Swal.fire( 'Error', `La cancha ${event.field.toString()} ya está ocupada`, 'error' );
+    }
+    
+    
     
     try {
       
@@ -24,7 +35,7 @@ export const eventStartAddNew = (event) => {
           _id: uid,
           name
         }
-       
+        // console.log(event)
         dispatch( eventAddNew( prepareFixedEvent(event, true) ) );
       }
       
@@ -96,7 +107,6 @@ export const eventsStartLoading = () => {
     try {
       const resp = await fetchWithToken('events');
       const body = await resp.json();
-      
       const events = prepareEvents( body.events )
       let expandedEvents = events;
       events.forEach( (event) => {
