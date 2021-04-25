@@ -28,7 +28,7 @@ export const CalendarScreen = () => {
   const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'week' )
   const dispatch = useDispatch();
   const { events, activeEvent } = useSelector(state => state.calendar);
-  // const { uid } = useSelector(state => state.auth);
+  const { uid } = useSelector(state => state.auth);
 
   useEffect(() => {
     dispatch( eventsStartLoading() );
@@ -75,8 +75,8 @@ export const CalendarScreen = () => {
   const eventStyleGetter = ( event, start, end, isSelected ) =>{
     const now = moment();
     const style = {
-      // backgroundColor: ( uid === event.user._id ) ? '#367CF7': '#465660',
-      backgroundColor: fieldsColors[event.field-1],
+      backgroundColor: ( uid === event.user._id ) ? fieldsColors[1]: '#367CF7',
+      // backgroundColor: fieldsColors[event.field-1],
       border: ( isSelected && activeEvent ) ? '3px solid black': '',
       borderRadius: ( isSelected && activeEvent ) ? '4px': 'opx',
       opacity: ( moment( now ).isBefore( moment( start ) ) ) ? 0.8: 0.4,
@@ -84,6 +84,7 @@ export const CalendarScreen = () => {
       color: 'white',
       fontSize: '0.8rem',
       maxWidth: "33.33%",
+      // overflowX: 'hidden'
       
     }
 
@@ -115,6 +116,7 @@ export const CalendarScreen = () => {
           event: CalendarEvent,
           dateCellWrapper: ColoredDateCellWrapper
         }}
+        views={['month', 'week', 'day']}
         view={ lastView }
         min={new Date(2016, 10, 0, 17, 0, 0)}
         scrollToTime={new Date(2016, 1, 1, 10)}
