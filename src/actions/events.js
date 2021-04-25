@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { fetchWithToken } from "../helpers/fetch";
+import { fetchAxios, fetchWithToken } from "../helpers/fetch";
 import { prepareEvents, prepareFixedEvent } from "../helpers/prepareEvents";
 import { types } from "../types/types";
 
@@ -102,12 +102,17 @@ export const eventStartDelete = () => {
 
 const eventDeleted = ( id ) => ({ type: types.eventDeleted, payload: id });
 
-export const eventsStartLoading = () => {
+export const eventsStartLoading = ( filter = {} ) => {
   return async ( dispatch ) => {
     try {
-      const resp = await fetchWithToken('events');
-      const body = await resp.json();
-      const events = prepareEvents( body.events )
+      // const resp = await fetchWithToken('events');
+      // const body = await resp.json();
+      // filter = {
+      //   ...filter,
+      //   fixedEvent: true
+      // }
+      const { data } = await fetchAxios('events', filter )
+      const events = prepareEvents( data.events )
       let expandedEvents = events;
       events.forEach( (event) => {
         if( event.fixedEvent ){

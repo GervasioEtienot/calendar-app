@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const baseUrl = process.env.REACT_APP_API_URL;
 
 export const fetchWithoutToken = ( endpoint, data, method = 'GET' ) => {
@@ -37,4 +39,32 @@ export const fetchWithToken = ( endpoint, data, method = 'GET' ) => {
       body: JSON.stringify( data )
     } );
   }
+}
+
+export const fetchAxios = ( endpoint, data, method = 'GET' ) => {
+  const url = `${ baseUrl }/${ endpoint }`;
+  const token = localStorage.getItem('token') || '';
+  let paramsRequest = {
+    url,
+    method,
+    headers: {
+      'content-type': 'application/json;charset=utf-8',
+      // 'authorization': `Bearer ${token}`,
+      'x-token': token
+    },
+  };
+
+  if( method === 'GET' ){
+    paramsRequest = {
+      ...paramsRequest,
+      params: data
+    }
+  } else {
+    paramsRequest = {
+      ...paramsRequest,
+      data
+    }
+  }
+  
+    return axios( paramsRequest );
 }
