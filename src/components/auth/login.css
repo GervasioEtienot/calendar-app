@@ -1,7 +1,19 @@
 .login-container{
-  margin-top: 15%;
+  /* margin-top: 7%; */
+  padding: 5% 10%;
+  max-width: 960px;
 }
+
+.main-container{
+  height: 100%;
+  background-image: url(../../assets/Cancha2.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .login-form-1{
+  background: white;
+  opacity: 0.8;
   border-radius: 5px;
   box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
   padding: 5%;
@@ -15,6 +27,11 @@
   box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
   padding: 5%;
   background: #0062cc;
+  opacity: 0.8;
+  /* background-image: url('/src/assets/cancha de futbol.jpg');
+  background-repeat: no-repeat;
+  background-size: 80% 100%;
+  background-position: center; */
 }
 .login-form-2 h3{
   text-align: center;
